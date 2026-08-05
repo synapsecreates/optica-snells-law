@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Optica — Learn Snell's Law</title>
+<meta name="description" content="An interactive journey through Snell's Law and the science of refraction." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/main.css" />
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "./js/vendor/three/three.module.js",
+    "three/addons/": "./js/vendor/three/addons/"
+  }
+}
+</script>
+</head>
+<body>
+
+<canvas id="signature-ray"></canvas>
+<div class="grid-overlay"></div>
+<div class="noise-veil"></div>
+
+<nav class="nav" id="mainNav">
+  <div class="nav__brand"><span class="dot"></span>Optica</div>
+  <div class="nav__links">
+    <a href="#hero" data-nav>Home</a>
+    <a href="#refraction" data-nav>Refraction</a>
+    <a href="#simulator" data-nav>Simulator</a>
+    <a href="#lab" data-nav>Physics Lab</a>
+    <a href="#math" data-nav>Mathematics</a>
+    <a href="#applications" data-nav>Applications</a>
+    <a href="#history" data-nav>History</a>
+    <a href="#experiments" data-nav>Experiments</a>
+    <a href="#quiz" data-nav>Quiz</a>
+  </div>
+</nav>
+
+<main>
+
+  <!-- ============ HERO ============ -->
+  <section id="hero" class="hero">
+    <div class="section-inner hero__grid">
+      <div>
+        <div class="hero__eyebrow">01 — Optica / Interactive Optics</div>
+        <h1 class="hero__title">
+          <span class="line"><span class="word">Light</span></span>
+          <span class="line"><span class="word">changes</span></span>
+          <span class="line"><span class="word accent">everything.</span></span>
+        </h1>
+        <p class="hero__sub">An interactive journey through Snell's Law and the science of refraction — from a bent pencil in a glass of water to the fibers that carry the internet.</p>
+        <div class="hero__ctas">
+          <a href="#refraction" class="btn btn--primary">Begin the Experiment
+            <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <a href="#simulator" class="btn">Open Simulator</a>
+        </div>
+        <div class="hero__stats">
+          <div class="hero__stat"><b>n = 2.417</b><span>Refractive index of diamond</span></div>
+          <div class="hero__stat"><b>1621</b><span>Year Snell derived the law</span></div>
+          <div class="hero__stat"><b>42°</b><span>Critical angle, glass → air</span></div>
+        </div>
+      </div>
+      <div class="hero__scene panel" id="heroScene"></div>
+    </div>
+    <div class="hero__scroll-cue"><span>SCROLL</span><span class="stem"></span></div>
+  </section>
+
+  <!-- ============ REFRACTION INTRO ============ -->
+  <section id="refraction">
+    <div class="section-inner">
+      <div class="section-eyebrow">02 — First Principles</div>
+      <h2 class="section-title">What is refraction?</h2>
+      <p class="section-lede">When light crosses the boundary between two media, it changes speed — and bends. Drag the incoming ray below and watch it happen.</p>
+
+      <div class="refract-demo">
+        <canvas id="refractCanvas" width="900" height="520"></canvas>
+        <div class="stat-card panel">
+          <div class="stat-row"><span class="label">Angle of incidence θ₁</span><span class="value cyan" id="rf-theta1">35.0°</span></div>
+          <div class="stat-row"><span class="label">Angle of refraction θ₂</span><span class="value violet" id="rf-theta2">25.5°</span></div>
+          <div class="stat-row"><span class="label">n (air)</span><span class="value" id="rf-n1">1.00</span></div>
+          <div class="stat-row"><span class="label">n (water)</span><span class="value" id="rf-n2">1.33</span></div>
+          <div class="stat-row"><span class="label">Bends</span><span class="value" id="rf-bend">Toward normal</span></div>
+          <div class="slider-block">
+            <label><span>Angle of incidence</span><span id="rf-angle-out">35°</span></label>
+            <input type="range" id="rf-angle" min="0" max="89" value="35" />
+          </div>
+          <p style="font-size:12px;color:var(--text-dim);margin-top:16px;">Tip: you can also click-drag directly on the incoming ray in the canvas.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SIMULATOR ============ -->
+  <section id="simulator">
+    <div class="section-inner">
+      <div class="section-eyebrow">03 — Main Feature</div>
+      <h2 class="section-title">The Snell's Law simulator</h2>
+      <p class="section-lede">n₁ sin θ₁ = n₂ sin θ₂ — set your media, your angle, your wavelength, and watch the law play out in real time, including total internal reflection.</p>
+
+      <div class="sim-layout">
+        <div class="sim-controls panel">
+          <h4>Incident angle</h4>
+          <input type="range" id="sim-angle" min="0" max="89" value="30" />
+          <div style="display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:12px;color:var(--text-dim);margin-top:6px;">
+            <span>0°</span><span id="sim-angle-out" class="mono" style="color:var(--text-hi)">30°</span><span>89°</span>
+          </div>
+
+          <h4>Medium 1 (incident)</h4>
+          <select id="sim-medium1">
+            <option value="air" selected>Air (n≈1.00)</option>
+            <option value="water">Water (n≈1.33)</option>
+            <option value="glass">Crown Glass (n≈1.52)</option>
+            <option value="diamond">Diamond (n≈2.42)</option>
+          </select>
+
+          <h4>Medium 2 (transmitted)</h4>
+          <select id="sim-medium2">
+            <option value="water">Water (n≈1.33)</option>
+            <option value="air" selected>Air (n≈1.00)</option>
+            <option value="glass">Crown Glass (n≈1.52)</option>
+            <option value="diamond">Diamond (n≈2.42)</option>
+          </select>
+
+          <h4>Preset pairs</h4>
+          <select id="sim-preset">
+            <option value="">Custom…</option>
+            <option value="air-water">Air → Water</option>
+            <option value="water-air">Water → Air</option>
+            <option value="air-glass">Air → Glass</option>
+            <option value="glass-air">Glass → Air</option>
+            <option value="diamond-air">Diamond → Air</option>
+          </select>
+
+          <h4>Wavelength</h4>
+          <div class="wave-swatches">
+            <div class="wave-swatch active" data-wl="red">Red</div>
+            <div class="wave-swatch" data-wl="green">Green</div>
+            <div class="wave-swatch" data-wl="blue">Blue</div>
+          </div>
+
+          <h4>Display</h4>
+          <div class="toggle-row">Show normal <label class="switch"><input type="checkbox" id="tog-normal" checked><span class="track"></span></label></div>
+          <div class="toggle-row">Show angles <label class="switch"><input type="checkbox" id="tog-angles" checked><span class="track"></span></label></div>
+          <div class="toggle-row">Show wavefronts <label class="switch"><input type="checkbox" id="tog-wavefronts"><span class="track"></span></label></div>
+          <div class="toggle-row">Slow motion <label class="switch"><input type="checkbox" id="tog-slowmo"><span class="track"></span></label></div>
+        </div>
+
+        <div class="sim-stage panel">
+          <div class="sim-canvas-wrap">
+            <canvas id="simCanvas" width="960" height="520"></canvas>
+          </div>
+          <div class="tir-banner" id="tirBanner">⚠ Total internal reflection — the ray cannot escape medium 1 at this angle.</div>
+          <div class="sim-formula">
+            <span>n₁ sin θ₁ = n₂ sin θ₂ &nbsp;→&nbsp;</span>
+            <span id="sim-formula-sub">1.00 × sin(30°) = 1.00 × sin(θ₂)</span>
+          </div>
+          <div class="sim-readout">
+            <div class="cell"><div class="k">θ₁ incidence</div><div class="v" id="sim-out-t1">30.0°</div></div>
+            <div class="cell"><div class="k">θ₂ refraction</div><div class="v" id="sim-out-t2">—</div></div>
+            <div class="cell"><div class="k">Critical angle</div><div class="v" id="sim-out-crit">—</div></div>
+            <div class="cell"><div class="k">Speed in medium 2</div><div class="v" id="sim-out-speed">—</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PHOTON PLAYGROUND ============ -->
+  <section id="lab">
+    <div class="section-inner">
+      <div class="section-eyebrow">04 — Matter.js Physics Lab</div>
+      <h2 class="section-title">Photon playground</h2>
+      <p class="section-lede">Spawn photons, drag mirrors and glass blocks, and watch light find its way — bending on every boundary it crosses.</p>
+
+      <div class="lab-layout">
+        <div class="lab-stage panel">
+          <div class="lab-toolbar">
+            <button class="tool-btn active" data-tool="photon">＋ Photon</button>
+            <button class="tool-btn" data-tool="mirror">＋ Mirror</button>
+            <button class="tool-btn" data-tool="glass">＋ Glass block</button>
+            <button class="tool-btn" data-tool="prism">＋ Prism</button>
+            <button class="tool-btn" id="gravityToggle">Gravity: off</button>
+            <button class="tool-btn" id="clearLab">Clear</button>
+          </div>
+          <canvas id="photonCanvas"></canvas>
+        </div>
+        <div class="lab-side panel">
+          <p><b style="color:var(--text-hi)">How to play</b></p>
+          <p>Choose a tool above, then click on the stage to place it. Click a photon emitter to fire a glowing particle — it bends according to Snell's Law whenever it enters glass, and reflects off mirrors.</p>
+          <div class="hint">Drag any placed object to reposition it. Prisms can be rotated by dragging near their edge.</div>
+          <div class="hint">Toggle gravity to watch photons arc like projectiles — a playful (not physically literal) way to explore the canvas.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MATH ============ -->
+  <section id="math">
+    <div class="section-inner">
+      <div class="section-eyebrow">05 — Mathematical Analysis</div>
+      <h2 class="section-title">The mathematics of bending light</h2>
+      <p class="section-lede">From Fermat's principle of least time to the wave interpretation — the full derivation of Snell's Law.</p>
+
+      <div class="math-grid">
+        <div class="math-card panel">
+          <h3 style="font-size:16px;margin-bottom:6px;">Snell's Law</h3>
+          <div class="eq">n<sub>1</sub> sin θ<sub>1</sub> = n<sub>2</sub> sin θ<sub>2</sub></div>
+          <div class="derivation-step"><div class="n">01</div><div class="t">Light travels at speed c/n in a medium of refractive index n — slower in denser media.</div></div>
+          <div class="derivation-step"><div class="n">02</div><div class="t">Fermat's Principle: light follows the path that takes the least time between two points, not the shortest distance.</div></div>
+          <div class="derivation-step"><div class="n">03</div><div class="t">Minimizing total travel time across a boundary (via calculus, setting dT/dx = 0) yields exactly n₁ sin θ₁ = n₂ sin θ₂.</div></div>
+          <div class="derivation-step"><div class="n">04</div><div class="t">Equivalently, Huygens' wavefronts pivot at the boundary because one edge of the wavefront slows before the other, rotating its direction.</div></div>
+        </div>
+
+        <div class="math-card panel">
+          <h3 style="font-size:16px;margin-bottom:6px;">Refractive index vs. critical angle</h3>
+          <canvas id="graphCanvas" width="600" height="280"></canvas>
+          <div class="slider-block">
+            <label><span>n₁ (denser medium)</span><span id="graph-n1-out">1.52</span></label>
+            <input type="range" id="graph-n1" min="101" max="250" value="152" />
+          </div>
+          <p style="font-size:12px;color:var(--text-dim);margin-top:14px;">Critical angle θc = sin⁻¹(n₂ / n₁), shown here for n₂ = 1 (air). Higher n₁ → smaller critical angle → total internal reflection kicks in sooner.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ APPLICATIONS ============ -->
+  <section id="applications">
+    <div class="section-inner">
+      <div class="section-eyebrow">06 — Real-World Applications</div>
+      <h2 class="section-title">Where Snell's Law shows up</h2>
+      <p class="section-lede">Every lens, fiber and gemstone in daily life is an argument with refraction. Tap a card for details.</p>
+      <div class="app-grid" id="appGrid"></div>
+    </div>
+  </section>
+  <div class="app-detail" id="appDetail">
+    <div class="app-detail__panel panel">
+      <button class="app-detail__close" id="appDetailClose">✕</button>
+      <div id="appDetailBody"></div>
+    </div>
+  </div>
+
+  <!-- ============ HISTORY ============ -->
+  <section id="history">
+    <div class="section-inner">
+      <div class="section-eyebrow">07 — Historical Timeline</div>
+      <h2 class="section-title">Four thousand years of bent light</h2>
+      <p class="section-lede">Scroll to travel from ancient lenses to modern photonics.</p>
+    </div>
+    <div class="timeline-track-wrap">
+      <div class="timeline-track" id="timelineTrack"></div>
+    </div>
+    <div class="section-inner">
+      <div class="timeline-progress"><div class="bar" id="timelineBar"></div></div>
+    </div>
+  </section>
+
+  <!-- ============ EXPERIMENTS ============ -->
+  <section id="experiments">
+    <div class="section-inner">
+      <div class="section-eyebrow">08 — Guided Experiment Mode</div>
+      <h2 class="section-title">The virtual laboratory</h2>
+      <p class="section-lede">Run classic optics experiments the way you would on a bench — with a notebook to match.</p>
+
+      <div class="exp-tabs" id="expTabs">
+        <button class="exp-tab active" data-exp="0">1 · Refractive Index of Glass</button>
+        <button class="exp-tab" data-exp="1">2 · Finding the Critical Angle</button>
+        <button class="exp-tab" data-exp="2">3 · Total Internal Reflection</button>
+        <button class="exp-tab" data-exp="3">4 · Red vs. Blue Light</button>
+      </div>
+
+      <div id="expPanels"></div>
+    </div>
+  </section>
+
+  <!-- ============ CHALLENGE MODE ============ -->
+  <section id="challenge">
+    <div class="section-inner">
+      <div class="section-eyebrow">09 — Challenge &amp; Analysis</div>
+      <h2 class="section-title">Solve it yourself</h2>
+      <p class="section-lede">Real problems, checked instantly, with full worked solutions.</p>
+
+      <div class="challenge-panel panel">
+        <div class="challenge-diff" id="challengeDiff">
+          <button class="exp-tab active" data-diff="beginner">Beginner</button>
+          <button class="exp-tab" data-diff="intermediate">Intermediate</button>
+          <button class="exp-tab" data-diff="advanced">Advanced</button>
+        </div>
+        <div class="problem-text" id="problemText"></div>
+        <div class="problem-input">
+          <input type="text" id="problemAnswer" placeholder="Your answer (numeric)" />
+          <button class="btn btn--primary" id="problemCheck">Check</button>
+          <button class="btn" id="problemNext">New problem</button>
+        </div>
+        <div class="problem-feedback" id="problemFeedback"></div>
+        <button class="btn" id="problemReveal" style="margin-bottom:16px;">Show full solution</button>
+        <div class="solution-steps" id="solutionSteps"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ QUIZ ============ -->
+  <section id="quiz">
+    <div class="section-inner">
+      <div class="section-eyebrow">10 — Assessment</div>
+      <h2 class="section-title">Test your understanding</h2>
+      <p class="section-lede">Ten questions across concept, calculation and prediction. Get your report card at the end.</p>
+
+      <div class="quiz-shell panel">
+        <div class="quiz-progress"><div class="bar" id="quizBar"></div></div>
+        <div class="quiz-body" id="quizBody"></div>
+        <div class="quiz-foot" id="quizFoot">
+          <span class="quiz-score mono" id="quizScoreLabel">Question 1 of 10</span>
+          <button class="btn btn--primary" id="quizNext">Next question</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Optica — an interactive optics learning experience. Built with Three.js, Matter.js, GSAP &amp; Lenis. For educational use.
+  </footer>
+
+</main>
+
+<!-- ============ Vendor libraries (self-hosted, no CDN dependency) ============ -->
+<script src="js/vendor/gsap/gsap.min.js"></script>
+<script src="js/vendor/gsap/ScrollTrigger.min.js"></script>
+<script src="js/vendor/matter/matter.min.js"></script>
+<script src="js/vendor/lenis/lenis.min.js"></script>
+
+<!-- ============ App modules ============ -->
+<script type="module" src="js/main.js"></script>
+
+</body>
+</html>
